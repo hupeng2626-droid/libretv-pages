@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.history.replaceState(
                     { search: searchQuery }, 
                     `搜索: ${searchQuery} - LibreTV`, 
-                    `/s=${encodeURIComponent(searchQuery)}`
+                    `?s=${encodeURIComponent(searchQuery)}`
                 );
             } catch (e) {
                 console.error('更新浏览器历史失败:', e);
