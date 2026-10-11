@@ -1,8 +1,14 @@
 // 全局变量
-let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '["bfzy","lzi"]'); // 默认选中资源
+let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '["lzi"]'); // 默认选中资源
+// 源配置版本迁移：暴风资源CDN当前大面积失效，统一切换到量子资源（仅执行一次）
+if (localStorage.getItem('apiConfigVersion') !== '2') {
+    selectedAPIs = ["lzi"];
+    localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
+    localStorage.setItem('apiConfigVersion', '2');
+}
 // 清理已失效的源，确保至少有一个可用源被选中
 selectedAPIs = selectedAPIs.filter(k => (typeof API_SITES !== 'undefined' && API_SITES[k]) || k.startsWith('custom_'));
-if (selectedAPIs.length === 0) { selectedAPIs = ["bfzy", "lzi"]; }
+if (selectedAPIs.length === 0) { selectedAPIs = ["lzi"]; }
 localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
 let customAPIs = JSON.parse(localStorage.getItem('customAPIs') || '[]'); // 存储自定义API列表
 
@@ -32,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 设置默认API选择（如果是第一次加载）
     if (!localStorage.getItem('hasInitializedDefaults')) {
         // 默认选中资源
-        selectedAPIs = ["bfzy", "lzi"];
+        selectedAPIs = ["lzi"];
         localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
 
         // 默认选中过滤开关
