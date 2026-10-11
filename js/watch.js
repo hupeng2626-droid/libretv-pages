@@ -3,8 +3,8 @@ window.onload = function() {
     // 获取当前URL的查询参数
     const currentParams = new URLSearchParams(window.location.search);
     
-    // 创建player.html的URL对象
-    const playerUrlObj = new URL("player.html", window.location.origin);
+    // 创建player.html的URL对象（以当前页面所在目录为基准，兼容子路径部署）
+    const playerUrlObj = new URL("player.html", window.location.href);
     
     // 更新状态文本
     const statusElement = document.getElementById('redirect-status');
@@ -54,8 +54,8 @@ window.onload = function() {
         // 如果有referrer但不是搜索页，也使用它
         returnUrl = referrer;
     } else {
-        // 默认回到首页
-        returnUrl = '/';
+        // 默认回到首页（相对路径，兼容子路径部署）
+        returnUrl = new URL('index.html', window.location.href).toString();
     }
     
     // 将返回URL添加到player.html的参数中

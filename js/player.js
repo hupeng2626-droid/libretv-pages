@@ -46,7 +46,7 @@ function goBack(event) {
     
     // 5. 无法确定上一页，则返回首页
     if (!referrer || referrer === '') {
-        window.location.href = '/';
+        window.location.href = './';
         return;
     }
     

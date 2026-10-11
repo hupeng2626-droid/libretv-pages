@@ -621,8 +621,8 @@ async function playFromHistory(url, title, episodeIndex, playbackPosition = 0) {
 
         // 保存当前页面URL作为返回地址
         let currentPath;
-        if (window.location.pathname.startsWith('/player.html') || window.location.pathname.startsWith('/watch.html')) {
-            currentPath = localStorage.getItem('lastPageUrl') || '/';
+        if (window.location.pathname.endsWith('/player.html') || window.location.pathname.endsWith('/watch.html')) {
+            currentPath = localStorage.getItem('lastPageUrl') || new URL('index.html', window.location.href).toString();
         } else {
             currentPath = window.location.origin + window.location.pathname + window.location.search;
         }

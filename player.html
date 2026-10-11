@@ -262,14 +262,14 @@
                         }
                     }
 
-                    // 多重兜底跳转
+                    // 多重兜底跳转（相对路径，兼容子路径部署）
                     try {
-                            window.location.href = '/';
+                            window.location.href = './';
                     } catch (e) {
                         try {
-                            window.location.replace('/');
+                            window.location.replace('./');
                         } catch (e2) {
-                            window.location.assign('/');
+                            window.location.assign('./');
                     }
                     }
                     return false;

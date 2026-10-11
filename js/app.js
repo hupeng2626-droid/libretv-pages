@@ -1062,8 +1062,8 @@ function closeVideoPlayer(home = false) {
         }
     }
     if (home) {
-        // 刷新主页
-        window.location.href = '/'
+        // 刷新主页（相对路径，兼容子路径部署）
+        window.location.href = './'
     }
 }
 
