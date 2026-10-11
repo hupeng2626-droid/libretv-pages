@@ -896,7 +896,7 @@ async function showDetails(id, vod_name, sourceCode) {
         // Add a timestamp to prevent caching
         const timestamp = new Date().getTime();
         const cacheBuster = `&_t=${timestamp}`;
-        const response = await fetch(`/api/detail?id=${encodeURIComponent(id)}${apiParams}${cacheBuster}`);
+        const response = await fetch(`/api/detail?id=${encodeURIComponent(id)}&title=${encodeURIComponent(vod_name || '')}${apiParams}${cacheBuster}`);
 
         const data = await response.json();
 

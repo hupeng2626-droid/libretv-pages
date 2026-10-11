@@ -1512,7 +1512,7 @@ async function testVideoSourceSpeed(sourceKey, vodId) {
         const cacheBuster = `&_t=${timestamp}`;
         
         // 获取视频详情
-        const response = await fetch(`/api/detail?id=${encodeURIComponent(vodId)}${apiParams}${cacheBuster}`, {
+        const response = await fetch(`/api/detail?id=${encodeURIComponent(vodId)}&title=${encodeURIComponent(currentVideoTitle || '')}${apiParams}${cacheBuster}`, {
             method: 'GET',
             cache: 'no-cache'
         });
@@ -1744,7 +1744,7 @@ async function switchToResource(sourceKey, vodId) {
         // Add a timestamp to prevent caching
         const timestamp = new Date().getTime();
         const cacheBuster = `&_t=${timestamp}`;
-        const response = await fetch(`/api/detail?id=${encodeURIComponent(vodId)}${apiParams}${cacheBuster}`);
+        const response = await fetch(`/api/detail?id=${encodeURIComponent(vodId)}&title=${encodeURIComponent(currentVideoTitle || '')}${apiParams}${cacheBuster}`);
         
         const data = await response.json();
         

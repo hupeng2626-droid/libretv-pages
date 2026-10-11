@@ -107,9 +107,16 @@ async function handleApiRequest(url) {
                 return await handleCustomApiSpecialDetail(id, customApi);
             }
             
-            const detailUrl = customApi
-                ? `${customApi}${API_CONFIG.detail.path}${id}`
-                : `${API_SITES[sourceCode].api}${API_CONFIG.detail.path}${id}`;
+            // 直连模式下，采集站仅对 wd= 搜索接口返回跨域头，ids= 详情接口会被浏览器拦截；
+            // 因此优先传入标题，走支持跨域的搜索接口按标题匹配 vod_id 获取详情
+            const detailTitle = url.searchParams.get('title') || '';
+            const detailUrl = detailTitle
+                ? (customApi
+                    ? `${customApi}${API_CONFIG.search.path}${encodeURIComponent(detailTitle)}`
+                    : `${API_SITES[sourceCode].api}${API_CONFIG.search.path}${encodeURIComponent(detailTitle)}`)
+                : (customApi
+                    ? `${customApi}${API_CONFIG.detail.path}${id}`
+                    : `${API_SITES[sourceCode].api}${API_CONFIG.detail.path}${id}`);
             
             // 添加超时处理
             const controller = new AbortController();
@@ -138,8 +145,15 @@ async function handleApiRequest(url) {
                     throw new Error('获取到的详情内容无效');
                 }
                 
-                // 获取第一个匹配的视频详情
-                const videoDetail = data.list[0];
+                // 按标题搜索时，从结果中精确匹配 vod_id；ids= 请求时取第一个
+                let videoDetail = data.list[0];
+                if (detailTitle) {
+                    const matched = (data.list || []).find(item => String(item.vod_id) === String(id));
+                    if (!matched) {
+                        throw new Error('搜索结果中未找到对应视频详情');
+                    }
+                    videoDetail = matched;
+                }
                 
                 // 提取播放地址
                 let episodes = [];

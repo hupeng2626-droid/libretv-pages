@@ -538,7 +538,7 @@ async function playFromHistory(url, title, episodeIndex, playbackPosition = 0) {
                 // historyItem.sourceName is used as the sourceCode here
                 // Add a cache buster timestamp
                 const timestamp = new Date().getTime();
-                const apiUrl = `/api/detail?id=${encodeURIComponent(historyItem.vod_id)}&source=${encodeURIComponent(historyItem.sourceName)}&_t=${timestamp}`;
+                const apiUrl = `/api/detail?id=${encodeURIComponent(historyItem.vod_id)}&title=${encodeURIComponent(title || '')}&source=${encodeURIComponent(historyItem.sourceName)}&_t=${timestamp}`;
 
                 // Add timeout to the fetch request
                 const controller = new AbortController();
