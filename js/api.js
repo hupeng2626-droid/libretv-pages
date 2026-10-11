@@ -571,7 +571,19 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
         if (requestUrl.pathname.startsWith('/api/')) {
             if (window.isPasswordProtected && window.isPasswordVerified) {
                 if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-                    return;
+                    // 未验证密码：弹出登录框并返回 401，避免调用方拿到 undefined 报错
+                    if (window.showPasswordModal) {
+                        try { window.showPasswordModal(); } catch (e) {}
+                    }
+                    return new Response(JSON.stringify({
+                        code: 401,
+                        msg: '请先输入访问密码'
+                    }), {
+                        status: 401,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
                 }
             }
             try {

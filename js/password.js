@@ -280,7 +280,14 @@ function initPasswordProtection() {
     }
 }
 
-// 在页面加载完成后初始化密码保护
+// 在页面加载完成后初始化密码保护（等待主配置就绪，避免时序问题）
 document.addEventListener('DOMContentLoaded', function () {
-    initPasswordProtection();
+    (async function () {
+        let attempts = 0;
+        while (!(window.MASTER_CONFIG_READY && window.MASTER_CONFIG && window.MASTER_CONFIG.auth && window.MASTER_CONFIG.auth.passwordHash) && attempts < 50) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        initPasswordProtection();
+    })();
 });
