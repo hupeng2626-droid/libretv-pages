@@ -458,9 +458,7 @@ async function fetchDoubanData(url) {
 
     try {
         // 添加鉴权参数到代理URL
-        const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-            await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(url)) :
-            PROXY_URL + encodeURIComponent(url);
+        const proxiedUrl = await buildFetchUrl(url);
             
         // 尝试直接访问（豆瓣API可能允许部分CORS请求）
         const response = await fetch(proxiedUrl, fetchOptions);
@@ -532,8 +530,8 @@ function renderDoubanCards(data, container) {
             // 1. 直接使用豆瓣图片URL (添加no-referrer属性)
             const originalCoverUrl = item.cover;
             
-            // 2. 也准备代理URL作为备选
-            const proxiedCoverUrl = PROXY_URL + encodeURIComponent(originalCoverUrl);
+            // 2. 备选URL：直连模式下豆瓣图片配合 no-referrer 可直接加载
+            const proxiedCoverUrl = originalCoverUrl;
             
             // 为不同设备优化卡片布局
             card.innerHTML = `

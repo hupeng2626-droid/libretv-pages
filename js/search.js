@@ -24,9 +24,7 @@ async function searchByAPIAndKeyWord(apiId, query) {
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         
         // 添加鉴权参数到代理URL
-        const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-            await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(apiUrl)) :
-            PROXY_URL + encodeURIComponent(apiUrl);
+        const proxiedUrl = await buildFetchUrl(apiUrl);
         
         const response = await fetch(proxiedUrl, {
             headers: API_CONFIG.search.headers,
@@ -75,9 +73,7 @@ async function searchByAPIAndKeyWord(apiId, query) {
                         const pageTimeoutId = setTimeout(() => pageController.abort(), 15000);
                         
                         // 添加鉴权参数到代理URL
-                        const proxiedPageUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-                            await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(pageUrl)) :
-                            PROXY_URL + encodeURIComponent(pageUrl);
+                        const proxiedPageUrl = await buildFetchUrl(pageUrl);
                         
                         const pageResponse = await fetch(proxiedPageUrl, {
                             headers: API_CONFIG.search.headers,

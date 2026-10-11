@@ -2,7 +2,7 @@
 async function handleApiRequest(url) {
     const customApi = url.searchParams.get('customApi') || '';
     const customDetail = url.searchParams.get('customDetail') || '';
-    const source = url.searchParams.get('source') || 'heimuer';
+    const source = url.searchParams.get('source') || 'bfzy';
     
     try {
         if (url.pathname === '/api/search') {
@@ -30,9 +30,7 @@ async function handleApiRequest(url) {
             
             try {
                 // 添加鉴权参数到代理URL
-                const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-                    await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(apiUrl)) :
-                    PROXY_URL + encodeURIComponent(apiUrl);
+                const proxiedUrl = await buildFetchUrl(apiUrl);
                     
                 const response = await fetch(proxiedUrl, {
                     headers: API_CONFIG.search.headers,
@@ -75,7 +73,7 @@ async function handleApiRequest(url) {
         // 详情处理
         if (url.pathname === '/api/detail') {
             const id = url.searchParams.get('id');
-            const sourceCode = url.searchParams.get('source') || 'heimuer'; // 获取源代码
+            const sourceCode = url.searchParams.get('source') || 'bfzy'; // 获取源代码
             
             if (!id) {
                 throw new Error('缺少视频ID参数');
@@ -119,9 +117,7 @@ async function handleApiRequest(url) {
             
             try {
                 // 添加鉴权参数到代理URL
-                const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-                    await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(detailUrl)) :
-                    PROXY_URL + encodeURIComponent(detailUrl);
+                const proxiedUrl = await buildFetchUrl(detailUrl);
                     
                 const response = await fetch(proxiedUrl, {
                     headers: API_CONFIG.detail.headers,
@@ -220,9 +216,7 @@ async function handleCustomApiSpecialDetail(id, customApi) {
         const timeoutId = setTimeout(() => controller.abort(), 10000);
         
         // 添加鉴权参数到代理URL
-        const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-            await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(detailUrl)) :
-            PROXY_URL + encodeURIComponent(detailUrl);
+        const proxiedUrl = await buildFetchUrl(detailUrl);
             
         // 获取详情页HTML
         const response = await fetch(proxiedUrl, {
@@ -287,9 +281,7 @@ async function handleSpecialSourceDetail(id, sourceCode) {
         const timeoutId = setTimeout(() => controller.abort(), 10000);
         
         // 添加鉴权参数到代理URL
-        const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-            await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(detailUrl)) :
-            PROXY_URL + encodeURIComponent(detailUrl);
+        const proxiedUrl = await buildFetchUrl(detailUrl);
             
         // 获取详情页HTML
         const response = await fetch(proxiedUrl, {
@@ -377,9 +369,7 @@ async function handleAggregatedSearch(searchQuery) {
             );
             
             // 添加鉴权参数到代理URL
-            const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-                await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(apiUrl)) :
-                PROXY_URL + encodeURIComponent(apiUrl);
+            const proxiedUrl = await buildFetchUrl(apiUrl);
             
             const fetchPromise = fetch(proxiedUrl, {
                 headers: API_CONFIG.search.headers
@@ -491,9 +481,7 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
             );
             
             // 添加鉴权参数到代理URL
-            const proxiedUrl = await window.ProxyAuth?.addAuthToProxyUrl ? 
-                await window.ProxyAuth.addAuthToProxyUrl(PROXY_URL + encodeURIComponent(fullUrl)) :
-                PROXY_URL + encodeURIComponent(fullUrl);
+            const proxiedUrl = await buildFetchUrl(fullUrl);
             
             const fetchPromise = fetch(proxiedUrl, {
                 headers: API_CONFIG.search.headers
@@ -614,8 +602,9 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
 
 async function testSiteAvailability(apiUrl) {
     try {
-        // 使用更简单的测试查询
-        const response = await fetch('/api/search?wd=test&customApi=' + encodeURIComponent(apiUrl), {
+        // 直连模式：直接请求自定义API测试可用性
+        const testUrl = `${apiUrl}${API_CONFIG.search.path}${encodeURIComponent('test')}`;
+        const response = await fetch(testUrl, {
             // 添加超时
             signal: AbortSignal.timeout(5000)
         });
